@@ -1,0 +1,2 @@
+﻿Just a place to put notes
+- due to the inavialablity of some minimum transaction volume data the arbitrage will have to meet a certain minimum volume threshhold.

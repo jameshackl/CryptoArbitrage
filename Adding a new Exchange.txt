@@ -1,0 +1,5 @@
+Update enum Exchange in GlobalData.cs
+Add Get*InitData
+Add Get*TransactionData
+Check that any fiat offered is in the fiat list
+
