@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArbitrageOpportunityFinder
 {
-    class MyDataTypes
+    internal class MyDataTypes
     {
     }
 
     public class Exchange
     {
         public string name { get; set; }
-
     }
+
     public class TriArbOpportunity //triangular arbitrage opportunity
     {
         public int depth { get { return arbitrageTransactionChain.Count(); } }
-        public TriArbOpportunity() { }
+
+        public TriArbOpportunity()
+        {
+        }
+
         public TriArbOpportunity(List<TriArbTransaction> ltat)
         {
             arbitrageTransactionChain = ltat;
@@ -31,24 +33,26 @@ namespace ArbitrageOpportunityFinder
                 return arbitrageTransactionChain.Select(x => x.takerIndicatorRate).Aggregate((x, y) => x * y);
             }
         }
-        public int limitingTransactionIndex { get; set; }
+
+        public int limitingTransactionIndex { get; private set; }
+
         public decimal maxInitialVolume
         {
             get
             {
                 decimal[] x = new decimal[depth];
-                for(int i = 0; i<depth;i++)
+                for (int i = 0; i < depth; i++)
                 {
                     x[i] = arbitrageTransactionChain[i].takerRateVolume;
-                    for(int j = 0; j<=i;j++)
+                    for (int j = 0; j <= i; j++)
                     {
-                        if(arbitrageTransactionChain[j].transType == Transaction.type.Transfer)
+                        if (arbitrageTransactionChain[j].transType == Transaction.type.Transfer)
                         {
                             //multiply by 1 or, in this case, do nothing
                         }
                         else
                         {
-                            if(arbitrageTransactionChain[j].takerIndicatorRate !=0)
+                            if (arbitrageTransactionChain[j].takerIndicatorRate != 0)
                             {
                                 x[i] /= arbitrageTransactionChain[j].takerIndicatorRate;
                             }
@@ -57,20 +61,19 @@ namespace ArbitrageOpportunityFinder
                                 x[i] = 0;
                             }
                         }
-                        
                     }
                 }
                 limitingTransactionIndex = Array.IndexOf(x, x.Min());
                 return x.Min();
             }
         }
+
         public List<TriArbTransaction> arbitrageTransactionChain { get; set; }
         public int length { get; set; }
     }
 
     public class TriArbTransaction //triangular arbitrage transaction
     {
-
         public TriArbTransaction(Transaction t, bool i)
         {
             transaction = t;
@@ -91,15 +94,16 @@ namespace ArbitrageOpportunityFinder
                 {
                     return transaction.bidVolume * transaction.bid;
                 }
-                
             }
         }
+
         public Transaction.type transType { get { return transaction.transactionType; } }
+
         public Currency baseCurrency
         {
             get
             {
-                if(inversed)
+                if (inversed)
                 {
                     return transaction.quoteCurrency;
                 }
@@ -109,6 +113,7 @@ namespace ArbitrageOpportunityFinder
                 }
             }
         }
+
         public Currency quoteCurrency
         {
             get
@@ -123,21 +128,21 @@ namespace ArbitrageOpportunityFinder
                 }
             }
         }
+
         public decimal takerIndicatorRate
         {
             get
             {
-                if(inversed)
+                if (inversed)
                 {
-                    if(transaction.ask != 0)
+                    if (transaction.ask != 0)
                     {
-                        return Math.Round(1 / transaction.ask,10);
+                        return Math.Round(1 / transaction.ask, 10);
                     }
                     else
                     {
                         return 0;
                     }
-                    
                 }
                 else
                 {
@@ -147,29 +152,30 @@ namespace ArbitrageOpportunityFinder
         }
 
         public bool inversed { get; set; } //for when it gets built from one transaction. this tracks the ones that get inversed
-
     }
 
     public class Transaction
     {
-
-        public Transaction() { }
+        public Transaction()
+        {
+        }
 
         //for finding cross exchange transfers
         public Transaction(Currency b, Currency q, decimal r, Transaction.type t)
         {
             bidOrderbook = new List<decimal[]>();
             askOrderbook = new List<decimal[]>();
-            bidOrderbook.Add(new decimal[] { 1, decimal.MaxValue });
-            askOrderbook.Add(new decimal[] { 1, decimal.MaxValue });
+            bidOrderbook.Add(new decimal[] { 1, decimal.MaxValue }); //TODO: get the actual numbers from either side's orderbook
+            askOrderbook.Add(new decimal[] { 1, decimal.MaxValue }); //TODO: get the actual numbers from either side's orderbook
             baseCurrency = b;
             quoteCurrency = q;
             transactionType = t;
         }
+
         public Currency baseCurrency { get; set; }
         public Currency quoteCurrency { get; set; }
         public string identifier { get; set; } //this is for updating transaction data, maybe
-        
+
         public decimal bid
         {
             get
@@ -179,6 +185,7 @@ namespace ArbitrageOpportunityFinder
             }
             //set
         }
+
         public decimal ask
         {
             get
@@ -186,7 +193,7 @@ namespace ArbitrageOpportunityFinder
                 try { return askOrderbook.Count == 0 ? 0 : askOrderbook.ElementAt(0)[0]; }
                 catch { return 0; }
             }
-            private set {}
+            private set { }
         }
 
         //quoted in the base currency
@@ -202,10 +209,10 @@ namespace ArbitrageOpportunityFinder
                 {
                     return bidOrderbook.ElementAt(0)[1];
                 }
-                
             }
             //set;
         }
+
         public decimal askVolume
         {
             get
@@ -218,13 +225,13 @@ namespace ArbitrageOpportunityFinder
                 {
                     return askOrderbook.ElementAt(0)[1];
                 }
-                
             }
             //set;
         }
 
         //price, volume
         public List<decimal[]> bidOrderbook { get; set; }
+
         public List<decimal[]> askOrderbook { get; set; }
 
         //to determine data age
@@ -237,15 +244,14 @@ namespace ArbitrageOpportunityFinder
 
         public enum type
         {
-            MarginTrade, //transaction can utilize margin 
+            MarginTrade, //transaction can utilize margin
             Transfer, //currency is transfered between exchanges.incurrs a transfer fee
             Trade //one currency is echanged for another.
-
         }
 
         //this is a "mulitplier"
         public decimal margin { get; set; }
-        
+
         //typically 0.002 or 0.2%
         public decimal fee { get; set; }
 
@@ -254,25 +260,29 @@ namespace ArbitrageOpportunityFinder
 
     public class Currency
     {
-        public Currency() { }
+        public Currency()
+        {
+        }
+
         public Currency(string s, GlobalData.Exchange e)
         {
             symbol = s;
             exchange = e;
         }
+
         public string symbol { get; set; }
         public string name { get; set; }
         public GlobalData.Exchange exchange { get; set; }
+
         //public string id { get; set; }
         public decimal withdrawlFee { get; set; }
+
         public decimal minimumTransaction { get; set; }//this may get dealt with differently
         public decimal maxWithdrawl { get; set; } //per day
         public decimal minWithdrawl { get; set; } //per day
-
     }
 
-        //    public class CrossExArbOpportunity //cross exchange arbitrage opportunity
-        //    {
-
-        //    }
+    //    public class CrossExArbOpportunity //cross exchange arbitrage opportunity
+    //    {
+    //    }
 }
