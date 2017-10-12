@@ -8,16 +8,33 @@ namespace ArbitrageOpportunityFinder
 {
     public sealed class GlobalData
     {
-        //TODO: Clean this up
-        private static GlobalData instance = null;
+        public static readonly string ArbitrageDatabasePath = "ArbData.db";
+
+        public static readonly string TransactionDatabasePath = "TransData.db";
+
         private static readonly object padlock = new object();
 
+        //TODO: Clean this up
+        private static GlobalData instance = null;
+        private List<Currency> _currencyBlackList;
         private List<Currency> _masterCurrencyList;
 
-        public void AddCurrencyToMasterList(Currency c)
-        {
-            _masterCurrencyList.Add(c);
-        }
+        private List<Transaction> _masterTransactionList;
+
+        private List<Transaction> _transactionBlackList;
+
+        private List<TriArbTransaction> _triArbTransactionList;
+
+        private string[] fiatList =
+            {
+                "USD",
+                "CAD",
+                "GBP",
+                "JPY",
+                "KRW",
+                "CNY",
+                "EUR"
+            };
 
         GlobalData()
         {
@@ -29,6 +46,8 @@ namespace ArbitrageOpportunityFinder
             _triArbTransactionList = new List<TriArbTransaction>();
             _triArbTransactionChainList = new List<TriArbOpportunity>();
         }
+
+        public enum Exchange { Poloniex, Cryptopia, Kraken, Bittrex }
 
         public static GlobalData Instance
         {
@@ -42,77 +61,45 @@ namespace ArbitrageOpportunityFinder
         }
 
         private List<TriArbOpportunity> _triArbTransactionChainList { get; set; }
+
+        public void AddCoinToBlckList(Currency coin)
+        {
+            _currencyBlackList.Add(coin);
+        }
+
+        public void AddCurrencyToMasterList(Currency c)
+        {
+            _masterCurrencyList.Add(c);
+        }
         public void AddToTriArbTransactionChainList(TriArbOpportunity m)
         {
             _triArbTransactionChainList.Add(m);
         }
 
-        public string GetTransactionChainsOutput()
+        public void AddTransactionToBlckList(Transaction trans)
         {
-            string s = "Found Transaction Chains: " + Environment.NewLine;
-            _triArbTransactionChainList = _triArbTransactionChainList.OrderByDescending(x => x.arbitrageRate).ToList();
-            foreach (TriArbOpportunity t in _triArbTransactionChainList)
-            {
-                s = s + t.arbitrageTransactionChain[0].baseCurrency.symbol + "-" + t.arbitrageTransactionChain[1].baseCurrency.symbol + "-" + t.arbitrageTransactionChain[2].baseCurrency.symbol + "-" + t.arbitrageTransactionChain[2].quoteCurrency.symbol + ":" + Math.Round((t.arbitrageRate * 100 - 100),3) + "% " + t.maxInitialVolume + Environment.NewLine;
-
-            }
-            return s;
-        }
-        public enum Exchange { ALL, Poloniex, Cryptopia, Kraken, Bittrex}
-        public static readonly string ArbitrageDatabasePath = "ArbData.db";
-        public static readonly string TransactionDatabasePath = "TransData.db";
-        private string[] fiatList =
-            {
-                "USD",
-                "CAD",
-                "GBP",
-                "JPY",
-                "KRW",
-                "CNY",
-                "EUR"
-            };
-
-
-        public List<TriArbTransaction> GetTriArbSubList(Exchange e, string s)
-        {
-            return _triArbTransactionList.Where(x => x.baseCurrency.symbol == s && x.baseCurrency.exchange == e).ToList();
+            _transactionBlackList.Add(trans);
         }
 
-        public List<TriArbTransaction> GetFinalSubListBySymbol(Exchange lookupE, string lookupS, string lastS)
+        public void AddTransactionToMasterlist(Transaction t)
         {
-            return _triArbTransactionList.Where(x => x.baseCurrency.symbol == lookupS && x.baseCurrency.exchange == lookupE && x.quoteCurrency.symbol == lastS).ToList();
+            _masterTransactionList.Add(t);
         }
 
-        public List<TriArbTransaction> GetFinalSubListBySymbolAndExchange(Exchange lookupE, string lookupS, string lastS, Exchange lastExchange)
+        public void ArbChainGenerator(int depth, string startingCurrency, Exchange startingExchange, string endCurrency, Exchange endExchange)
         {
-            return _triArbTransactionList.Where(x => x.baseCurrency.symbol == lookupS && x.baseCurrency.exchange == lookupE && x.quoteCurrency.symbol == lastS && x.quoteCurrency.exchange == lastExchange).ToList();
-        }
-
-        public void FilterSubList(ref List<TriArbTransaction> list, string currency)
-        {
-            //failure modes: buy then immediately sell, trade back to the starting currency early
-            // in pent-arb you can creat a closed off loop of chain that will most likely lose
-            int wasted;
-            wasted = list.RemoveAll(x => x.quoteCurrency.symbol == currency);
-        }
-        public List<Transaction> GetTransSubListByExchange(Exchange e)
-        {
-            return _masterTransactionList.Where(x => x.baseCurrency.exchange == e && x.quoteCurrency.exchange == e).ToList();
-        }
-        public void ArbChainGenerator(int depth, string startingCurrency, Exchange e)
-        {
-            List<TriArbTransaction> startingList = GetTriArbSubList(e, startingCurrency);
+            List<TriArbTransaction> startingList = GetTriArbSubList(startingExchange, startingCurrency);
 
             foreach (TriArbTransaction t in startingList)
             {
-                List<TriArbTransaction> u = GetTriArbSubList(t.quoteCurrency.exchange,t.quoteCurrency.symbol);
-                FilterSubList(ref u, t.baseCurrency.symbol);
+                List<TriArbTransaction> u = GetTriArbSubList(t.quoteCurrency.exchange, t.quoteCurrency.symbol);
+                FilterSubList(ref u, startingCurrency);
 
                 if (depth == 3)
                 {
                     foreach (TriArbTransaction v in u)
                     {
-                        List<TriArbTransaction> w = GetFinalSubListBySymbol(v.quoteCurrency.exchange,v.quoteCurrency.symbol,startingCurrency);
+                        List<TriArbTransaction> w = GetFinalSubListBySymbol(v.quoteCurrency.exchange, v.quoteCurrency.symbol, endCurrency);
 
                         foreach (TriArbTransaction x in w)
                         {
@@ -143,13 +130,13 @@ namespace ArbitrageOpportunityFinder
                 {
                     foreach (TriArbTransaction v in u)
                     {
-                        List<TriArbTransaction> w = GetTriArbSubList(v.quoteCurrency.exchange,v.quoteCurrency.symbol);
+                        List<TriArbTransaction> w = GetTriArbSubList(v.quoteCurrency.exchange, v.quoteCurrency.symbol);
                         FilterSubList(ref w, startingCurrency);
                         FilterSubList(ref w, v.baseCurrency.symbol);
 
                         foreach (TriArbTransaction y in w)
                         {
-                            List<TriArbTransaction> z = GetFinalSubListBySymbol(y.quoteCurrency.exchange,y.quoteCurrency.symbol,startingCurrency);
+                            List<TriArbTransaction> z = GetFinalSubListBySymbol(y.quoteCurrency.exchange, y.quoteCurrency.symbol, endCurrency);
 
                             foreach (TriArbTransaction x in z)
                             {
@@ -188,103 +175,47 @@ namespace ArbitrageOpportunityFinder
                 }
             }
         }
-        public void GenerateTriArbTransactionChains()
-        {
-            //clear list
-            if (!(_triArbTransactionChainList.Count() == 0))
-                _triArbTransactionChainList.Clear();
-            
-            //this is fucking madness. 
-            //populates the List<TriArbOpportunity>
-            string[] startingCurrencies = { "BTC" }; //why not check all holdings. may have to be a dictionary in the future
-            Exchange[] startingExchange = { Exchange.Poloniex };
-            int depth = 3;
-
-            string endingCurrency = startingCurrencies[0];
-            var endingExchange = startingExchange;
-
-            foreach (string sc in startingCurrencies)
-            {
-                foreach (Exchange e in startingExchange)
-                {
-                    ArbChainGenerator(depth, sc, e);
-                }
-            }
-        }
-
-        private List<Currency> _currencyBlackList;
-        public void AddCoinToBlckList(Currency coin)
-        {
-            _currencyBlackList.Add(coin);
-        }
-        internal List<Currency> GetCoinBlackList()
-        {
-            return _currencyBlackList;
-        }
-
-        private List<Transaction> _transactionBlackList;
-        public void AddTransactionToBlckList(Transaction trans)
-        {
-            _transactionBlackList.Add(trans);
-        }
-
-
-        private List<Transaction> _masterTransactionList;
-        public void AddTransactionToMasterlist(Transaction t)
-        {
-            _masterTransactionList.Add(t);
-        }
-
-        internal List<Transaction> GetMasterTransactionList()
-        {
-            return _masterTransactionList;
-        }
 
         public bool ExistsTransaction(Exchange e, string id)
         {
             return _masterTransactionList.Exists(x => x.baseCurrency.exchange == e && x.quoteCurrency.exchange == e && x.identifier == id);
         }
 
-        public void UpdateTransaction(Exchange e, string id, List<decimal[]> bidO, List<decimal[]> askO)
+        public void FilterSubList(ref List<TriArbTransaction> list, string currency)
         {
-            int index = _masterTransactionList.FindIndex(x => x.baseCurrency.exchange == e && x.quoteCurrency.exchange == e && x.identifier == id);
-            _masterTransactionList[index].askOrderbook = askO;
-            _masterTransactionList[index].bidOrderbook = bidO;
+            //failure modes: buy then immediately sell, trade back to the starting currency early
+            // in pent-arb you can creat a closed off loop of chain that will most likely lose
+            int wasted;
+            wasted = list.RemoveAll(x => x.quoteCurrency.symbol == currency);
         }
 
-        public void UpdateTransactionOrderbook(Exchange e, string id, Dictionary<decimal,decimal> bidV, Dictionary<decimal, decimal> askV)
+        public void GenerateTriArbTransactionChains(int depth)
         {
-            Transaction trans = _masterTransactionList.First(x => x.baseCurrency.exchange == e && x.quoteCurrency.exchange == e && x.identifier == id);
+            //clear list
+            if (!(_triArbTransactionChainList.Count() == 0))
+                _triArbTransactionChainList.Clear();
 
-        }
 
-        public int GetMasterTransactionCount()
-        {
-            return _masterTransactionList.Count();
-        }
+            //populates the List<TriArbOpportunity>
+            string[] startingCurrencies = { "BTC" }; //why not check all holdings. may have to be a dictionary in the future
+            Exchange[] startingExchange = { Exchange.Poloniex };
 
-        public void RemoveTransactionByCoin(Currency coin)
-        {
-            _masterTransactionList.RemoveAll(x => x.baseCurrency.exchange == coin.exchange && x.baseCurrency.symbol == coin.symbol);
-            _masterTransactionList.RemoveAll(x => x.quoteCurrency.exchange == coin.exchange && x.quoteCurrency.symbol == coin.symbol);
-        }
+            string endingCurrency = startingCurrencies[0];
+            var endingExchange = startingExchange[0];
 
-        private List<TriArbTransaction> _triArbTransactionList;
-
-        private void AddTriArbTransList(TriArbTransaction t)
-        {
-            _triArbTransactionList.Add(t);
-        }
-
-        public int GetTriArbTransChainCount()
-        {
-            return _triArbTransactionChainList.Count();
+            foreach (string sc in startingCurrencies)
+            {
+                foreach (Exchange e in startingExchange)
+                {
+                    ArbChainGenerator(depth, sc, e,endingCurrency,endingExchange);
+                }
+            }
         }
 
         public void GenerateTriArbTransactionList()
         {
             //clear old list
-            if(!(_triArbTransactionList.Count() == 0))
+            if (!(_triArbTransactionList.Count() == 0))
             {
                 _triArbTransactionList.Clear();
             }
@@ -297,7 +228,7 @@ namespace ArbitrageOpportunityFinder
                     new TriArbTransaction(trans, false));
                 //backwards
                 AddTriArbTransList(
-                    new TriArbTransaction(trans, true));                
+                    new TriArbTransaction(trans, true));
             }
 
 
@@ -325,7 +256,7 @@ namespace ArbitrageOpportunityFinder
             {
                 currencyList.RemoveAll(x => x.symbol == c);
             }
-            
+
             //now find all the possible transfers between exchanges
 
 
@@ -333,17 +264,57 @@ namespace ArbitrageOpportunityFinder
             foreach (Currency c in currencyList)
             {
                 intermediateCurrencyList = currencyList.FindAll(x => x.symbol == c.symbol && c.exchange != x.exchange);
-                foreach(Currency t in intermediateCurrencyList)
+                foreach (Currency t in intermediateCurrencyList)
                 {
 
-                    AddTriArbTransList(new TriArbTransaction(new Transaction(c,t,1,Transaction.type.Transfer), false));
+                    AddTriArbTransList(new TriArbTransaction(new Transaction(c, t, 1, Transaction.type.Transfer), false));
                 }
 
             }
 
-            
+
             //maybe not the best but this should add all the the forward transactions, reverse transaction, and the transfers
-            
+
+        }
+
+        public List<TriArbTransaction> GetFinalSubListBySymbol(Exchange lookupE, string lookupS, string lastS)
+        {
+            return _triArbTransactionList.Where(x => x.baseCurrency.symbol == lookupS && x.baseCurrency.exchange == lookupE && x.quoteCurrency.symbol == lastS).ToList();
+        }
+
+        public List<TriArbTransaction> GetFinalSubListBySymbolAndExchange(Exchange lookupE, string lookupS, string lastS, Exchange lastExchange)
+        {
+            return _triArbTransactionList.Where(x => x.baseCurrency.symbol == lookupS && x.baseCurrency.exchange == lookupE && x.quoteCurrency.symbol == lastS && x.quoteCurrency.exchange == lastExchange).ToList();
+        }
+
+        public int GetMasterTransactionCount()
+        {
+            return _masterTransactionList.Count();
+        }
+
+        public string GetTransactionChainsOutput()
+        {
+            string s = "Found Transaction Chains: " + Environment.NewLine;
+            _triArbTransactionChainList = _triArbTransactionChainList.OrderByDescending(x => x.arbitrageRate).ToList();
+            foreach (TriArbOpportunity t in _triArbTransactionChainList)
+            {
+                s = s + t.arbitrageTransactionChain[0].baseCurrency.symbol + "-" + t.arbitrageTransactionChain[1].baseCurrency.symbol + "-" + t.arbitrageTransactionChain[2].baseCurrency.symbol + "-" + t.arbitrageTransactionChain[2].quoteCurrency.symbol + ":" + Math.Round((t.arbitrageRate * 100 - 100),3) + "% " + t.maxInitialVolume + Environment.NewLine;
+
+            }
+            return s;
+        }
+        public List<Transaction> GetTransSubListByExchange(Exchange e)
+        {
+            return _masterTransactionList.Where(x => x.baseCurrency.exchange == e && x.quoteCurrency.exchange == e).ToList();
+        }
+
+        public List<TriArbTransaction> GetTriArbSubList(Exchange e, string s)
+        {
+            return _triArbTransactionList.Where(x => x.baseCurrency.symbol == s && x.baseCurrency.exchange == e).ToList();
+        }
+        public int GetTriArbTransChainCount()
+        {
+            return _triArbTransactionChainList.Count();
         }
 
         public int GetTriArbTransListCount()
@@ -351,9 +322,15 @@ namespace ArbitrageOpportunityFinder
             return _triArbTransactionList.Count();
         }
 
+        public void RemoveTransactionByCoin(Currency coin)
+        {
+            _masterTransactionList.RemoveAll(x => x.baseCurrency.exchange == coin.exchange && x.baseCurrency.symbol == coin.symbol);
+            _masterTransactionList.RemoveAll(x => x.quoteCurrency.exchange == coin.exchange && x.quoteCurrency.symbol == coin.symbol);
+        }
+
         public void TranslateISOCurrencies()
         {
-            foreach(Transaction t in _masterTransactionList)
+            foreach (Transaction t in _masterTransactionList)
             {
                 //known iso standard conversions
                 //XBT => BTC
@@ -369,7 +346,31 @@ namespace ArbitrageOpportunityFinder
             }
         }
 
-        
+        public void UpdateTransaction(Exchange e, string id, List<decimal[]> bidO, List<decimal[]> askO)
+        {
+            int index = _masterTransactionList.FindIndex(x => x.baseCurrency.exchange == e && x.quoteCurrency.exchange == e && x.identifier == id);
+            _masterTransactionList[index].askOrderbook = askO;
+            _masterTransactionList[index].bidOrderbook = bidO;
+        }
+
+        public void UpdateTransactionOrderbook(Exchange e, string id, Dictionary<decimal, decimal> bidV, Dictionary<decimal, decimal> askV)
+        {
+            Transaction trans = _masterTransactionList.First(x => x.baseCurrency.exchange == e && x.quoteCurrency.exchange == e && x.identifier == id);
+
+        }
+
+        internal List<Currency> GetCoinBlackList()
+        {
+            return _currencyBlackList;
+        }
+        internal List<Transaction> GetMasterTransactionList()
+        {
+            return _masterTransactionList;
+        }
+        private void AddTriArbTransList(TriArbTransaction t)
+        {
+            _triArbTransactionList.Add(t);
+        }
     }
 
 }
