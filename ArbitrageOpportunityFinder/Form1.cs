@@ -43,7 +43,7 @@ namespace ArbitrageOpportunityFinder
         private void button_triArbOpportunities_Click(object sender, EventArgs e)
         {
             GlobalData db = GlobalData.Instance;
-            db.GenerateTriArbTransactionChains();
+            db.GenerateTriArbTransactionChains(3);
             textBox_Messages.Text = "Number of arbitrage chains: " + db.GetTriArbTransChainCount();
 
             textBox1.Text = db.GetTransactionChainsOutput();
@@ -62,6 +62,15 @@ namespace ArbitrageOpportunityFinder
             GlobalData db = GlobalData.Instance;
 
             //huh, turns out it never acually changes anything
+            textBox1.Text = db.GetTransactionChainsOutput();
+        }
+
+        private void button_QuadArbOpportunities_Click(object sender, EventArgs e)
+        {
+            GlobalData db = GlobalData.Instance;
+            db.GenerateTriArbTransactionChains(4);
+            textBox_Messages.Text = "Number of arbitrage chains: " + db.GetTriArbTransChainCount();
+
             textBox1.Text = db.GetTransactionChainsOutput();
         }
     }
