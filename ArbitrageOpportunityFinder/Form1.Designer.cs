@@ -30,18 +30,13 @@
         {
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button_getExchangeData = new System.Windows.Forms.Button();
-            this.button_crossArbOpportunities = new System.Windows.Forms.Button();
-            this.button_LoadData = new System.Windows.Forms.Button();
-            this.button_SaveData = new System.Windows.Forms.Button();
             this.button_triArbOpportunities = new System.Windows.Forms.Button();
             this.button_UpdateTransactionData = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox_Messages = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.button_QuadArbOpportunities = new System.Windows.Forms.Button();
-            this.button_PentArbOpportunities = new System.Windows.Forms.Button();
             this.button_GetTriArbTransactions = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -65,33 +60,6 @@
             this.button_getExchangeData.Text = "Get Exchange Data";
             this.button_getExchangeData.UseVisualStyleBackColor = true;
             this.button_getExchangeData.Click += new System.EventHandler(this.button_getExchangeData_Click);
-            // 
-            // button_crossArbOpportunities
-            // 
-            this.button_crossArbOpportunities.Location = new System.Drawing.Point(26, 486);
-            this.button_crossArbOpportunities.Name = "button_crossArbOpportunities";
-            this.button_crossArbOpportunities.Size = new System.Drawing.Size(269, 30);
-            this.button_crossArbOpportunities.TabIndex = 3;
-            this.button_crossArbOpportunities.Text = "Cross Exchange Arbitrage Opportunities";
-            this.button_crossArbOpportunities.UseVisualStyleBackColor = true;
-            // 
-            // button_LoadData
-            // 
-            this.button_LoadData.Location = new System.Drawing.Point(26, 190);
-            this.button_LoadData.Name = "button_LoadData";
-            this.button_LoadData.Size = new System.Drawing.Size(161, 23);
-            this.button_LoadData.TabIndex = 4;
-            this.button_LoadData.Text = "Load Arbitrage Data";
-            this.button_LoadData.UseVisualStyleBackColor = true;
-            // 
-            // button_SaveData
-            // 
-            this.button_SaveData.Location = new System.Drawing.Point(26, 161);
-            this.button_SaveData.Name = "button_SaveData";
-            this.button_SaveData.Size = new System.Drawing.Size(161, 23);
-            this.button_SaveData.TabIndex = 5;
-            this.button_SaveData.Text = "Save Arbitrage Data";
-            this.button_SaveData.UseVisualStyleBackColor = true;
             // 
             // button_triArbOpportunities
             // 
@@ -150,15 +118,6 @@
             this.label2.TabIndex = 12;
             this.label2.Text = "Messages";
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(0, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 13;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // button_QuadArbOpportunities
             // 
             this.button_QuadArbOpportunities.Location = new System.Drawing.Point(301, 450);
@@ -167,15 +126,7 @@
             this.button_QuadArbOpportunities.TabIndex = 14;
             this.button_QuadArbOpportunities.Text = "Quad";
             this.button_QuadArbOpportunities.UseVisualStyleBackColor = true;
-            // 
-            // button_PentArbOpportunities
-            // 
-            this.button_PentArbOpportunities.Location = new System.Drawing.Point(382, 450);
-            this.button_PentArbOpportunities.Name = "button_PentArbOpportunities";
-            this.button_PentArbOpportunities.Size = new System.Drawing.Size(147, 30);
-            this.button_PentArbOpportunities.TabIndex = 15;
-            this.button_PentArbOpportunities.Text = "PentArb - Caution";
-            this.button_PentArbOpportunities.UseVisualStyleBackColor = true;
+            this.button_QuadArbOpportunities.Click += new System.EventHandler(this.button_QuadArbOpportunities_Click);
             // 
             // button_GetTriArbTransactions
             // 
@@ -193,18 +144,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1543, 806);
             this.Controls.Add(this.button_GetTriArbTransactions);
-            this.Controls.Add(this.button_PentArbOpportunities);
             this.Controls.Add(this.button_QuadArbOpportunities);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox_Messages);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button_UpdateTransactionData);
             this.Controls.Add(this.button_triArbOpportunities);
-            this.Controls.Add(this.button_SaveData);
-            this.Controls.Add(this.button_LoadData);
-            this.Controls.Add(this.button_crossArbOpportunities);
             this.Controls.Add(this.button_getExchangeData);
             this.Controls.Add(this.textBox1);
             this.Name = "Form1";
@@ -218,18 +164,13 @@
 
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button_getExchangeData;
-        private System.Windows.Forms.Button button_crossArbOpportunities;
-        private System.Windows.Forms.Button button_LoadData;
-        private System.Windows.Forms.Button button_SaveData;
         private System.Windows.Forms.Button button_triArbOpportunities;
         private System.Windows.Forms.Button button_UpdateTransactionData;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox_Messages;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button_QuadArbOpportunities;
-        private System.Windows.Forms.Button button_PentArbOpportunities;
         private System.Windows.Forms.Button button_GetTriArbTransactions;
     }
 }
