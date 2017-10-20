@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ArbitrageOpportunityFinder.Exchanges
 {
-    class Poloniex : IExchange
+    class Poloniex
     {
 
     }
