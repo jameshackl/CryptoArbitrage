@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ArbitrageOpportunityFinder
 {
-    internal class MyDataTypes
+    internal class DataTypes
     {
     }
 
