@@ -11,14 +11,15 @@
         <Button x:Name="button_SaveDatabase" Content="Save State" HorizontalAlignment="Left" Margin="320,591,0,0" VerticalAlignment="Top" Width="150"/>
         <Button x:Name="button_LoadDatabase" Content="Load Last Saved State" HorizontalAlignment="Left" Margin="10,591,0,0" VerticalAlignment="Top" Width="150"/>
         <Button x:Name="button_GetInitData" Content="Get Background Data" HorizontalAlignment="Left" Margin="165,591,0,0" VerticalAlignment="Top" Width="150"/>
-        <ComboBox x:Name="comboBox_StartingExchange" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="cB_StartingExchange_Selected">
+        <ComboBox x:Name="comboBox_StartingExchange" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="120">
             <ComboBoxItem IsSelected="True">Poloniex</ComboBoxItem>
             <ComboBoxItem >Cryptopia</ComboBoxItem>
             <ComboBoxItem>Bittrex</ComboBoxItem>
+            <ComboBoxItem Content="ComboBoxItem" HorizontalAlignment="Left" Width="494.4"/>
             TODO: hardcoding. these need to be brough in dynamically for all of the available holdings
         </ComboBox>
         <!--http://www.wpf-tutorial.com/list-controls/combobox-control/-->
-        <ComboBox x:Name="comboBox_StartingCurrency" HorizontalAlignment="Left" Margin="10,97,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="cB_StartingCurrency_Selected">
+        <ComboBox x:Name="comboBox_StartingCurrency" HorizontalAlignment="Left" Margin="10,97,0,0" VerticalAlignment="Top" Width="120">
             <ComboBoxItem IsSelected="True">BTC</ComboBoxItem>
             <ComboBoxItem >LTC</ComboBoxItem>
             <ComboBoxItem>ETH</ComboBoxItem>
@@ -26,9 +27,9 @@
         </ComboBox>
 
         <Label x:Name="label" Content="Starting Exchange" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label1" Content="Starting Currency" HorizontalAlignment="Left" Margin="10,71,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label1" Content="Currency" HorizontalAlignment="Left" Margin="10,71,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="Ending Exchange" HorizontalAlignment="Left" Margin="193,10,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="comboBox2" HorizontalAlignment="Left" Margin="193,36,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="cB_EndingExchange_Selected">
+        <ComboBox x:Name="comboBox2" HorizontalAlignment="Left" Margin="193,36,0,0" VerticalAlignment="Top" Width="120">
             <ComboBoxItem IsSelected="True">Same as starting</ComboBoxItem>
             <ComboBoxItem >ALL</ComboBoxItem>
             <ComboBoxItem>Poloniex</ComboBoxItem>
