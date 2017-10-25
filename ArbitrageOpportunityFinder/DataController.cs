@@ -15,6 +15,7 @@ namespace ArbitrageOpportunityFinder
 
         public static string WebReq(string URL)
         {
+            //TODO: web error handling
             string responseStr;
 
             HttpWebRequest request = WebRequest.Create(URL) as HttpWebRequest;
@@ -25,9 +26,8 @@ namespace ArbitrageOpportunityFinder
                 // Get the response stream  
                 StreamReader reader = new StreamReader(response.GetResponseStream());
 
-                // Console application output
                 responseStr = reader.ReadToEnd();
-                //Console.WriteLine(responseStr);
+
                 response.Close();
 
             }
@@ -35,7 +35,7 @@ namespace ArbitrageOpportunityFinder
             return responseStr;
         }
 
-        //these methods are here for no other reason than to have them all in one place
+        //these methods are here for no other reason than to have them all in one place and to avoid using reflection
         public static bool GetInitData()
         {
             GetPoloniexInitData();
@@ -74,6 +74,8 @@ namespace ArbitrageOpportunityFinder
             GetCryptopiaPriceData();
             //TODO:seperate out the transaction getter so the prices can be updated
         }
+        #region Parsers
+        //Dear Reader, This is not a great way to do this. I did it this way to collect data as fast as possible so I could do analysis on it.
         public static void GetPoloniexTransactionData()
         {
             dynamic orderbook = JsonConvert.DeserializeObject(WebReq("https://poloniex.com/public?command=returnOrderBook&currencyPair=ALL&depth=10"));
@@ -291,7 +293,7 @@ namespace ArbitrageOpportunityFinder
             var exchange = GlobalData.Exchange.Kraken;
             GlobalData db = GlobalData.Instance;
 
-            //kraken is kind of fucky. have to use currency list to get the proper names of the coins
+            //have to use currency list to get the proper names of the coins
             //also the url for the transaction list is absurd
 
             var krakenCoinDict = new Dictionary<string, string>();
@@ -424,3 +426,4 @@ namespace ArbitrageOpportunityFinder
         }
     }
 }
+#endregion
