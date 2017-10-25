@@ -8,10 +8,7 @@ namespace ArbitrageOpportunityFinder
 {
     public sealed class GlobalData
     {
-        public static readonly string ArbitrageDatabasePath = "ArbData.db";
-
-        public static readonly string TransactionDatabasePath = "TransData.db";
-
+        //singleton 
         private static readonly object padlock = new object();
 
         //TODO: Clean this up
@@ -294,6 +291,7 @@ namespace ArbitrageOpportunityFinder
 
         public string GetTransactionChainsOutput()
         {
+            //TODO: this is the old output function. Needs to be called from the view model
             string s = "Found Transaction Chains: " + Environment.NewLine;
             _triArbTransactionChainList = _triArbTransactionChainList.OrderByDescending(x => x.arbitrageRate).ToList();
             foreach (TriArbOpportunity t in _triArbTransactionChainList)
