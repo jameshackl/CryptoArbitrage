@@ -22,22 +22,8 @@ namespace TriArbTool
     {
         public MainWindow()
         {
+            MessageBox.Show()
             InitializeComponent();
-        }
-
-        private void cB_EndingExchange_Selected(object sender, SelectionChangedEventArgs e)
-        {
-            //set variables in the global variables
-        }
-
-        private void cB_StartingCurrency_Selected(object sender, SelectionChangedEventArgs e)
-        {
-            //set variables in the global variables
-        }
-
-        private void cB_StartingExchange_Selected(object sender, SelectionChangedEventArgs e)
-        {
-            //set variables in the global variables
         }
 
         private void button_GetTriArbOpportunities_Click(object sender, RoutedEventArgs e)
