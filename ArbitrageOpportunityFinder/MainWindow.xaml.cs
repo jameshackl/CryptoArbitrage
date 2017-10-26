@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TriArbTool
+namespace ArbitrageOpportunityFinder
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -22,7 +22,6 @@ namespace TriArbTool
     {
         public MainWindow()
         {
-            MessageBox.Show()
             InitializeComponent();
         }
 
