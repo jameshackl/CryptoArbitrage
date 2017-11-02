@@ -35,7 +35,7 @@ namespace ArbitrageOpportunityFinder
                 volumeGain = "0.0001"
 
             };
-            //var item02 = new MockItemViewModel() { Title = "Title 02", Address = "Address 02" };
+
             Items = new ObservableCollection<TriArbViewModel>()
             {
                 item01
