@@ -8,6 +8,39 @@ namespace ArbitrageOpportunityFinder
 {
     public class TriArbViewModel
     {
+        public TriArbViewModel() { }
+        public TriArbViewModel(TriArbOpportunity tao)
+        {
+            exchange1 = tao.arbitrageTransactionChain[0].baseCurrency.exchange.ToString();
+            exchange2 = tao.arbitrageTransactionChain[1].baseCurrency.exchange.ToString();
+            exchange3 = tao.arbitrageTransactionChain[2].baseCurrency.exchange.ToString();
+            exchange4 = tao.arbitrageTransactionChain[2].quoteCurrency.exchange.ToString();
+
+            currency1 = tao.arbitrageTransactionChain[0].baseCurrency.symbol;
+            currency2 = tao.arbitrageTransactionChain[1].baseCurrency.symbol;
+            currency3 = tao.arbitrageTransactionChain[2].baseCurrency.symbol;
+            currency4 = tao.arbitrageTransactionChain[2].quoteCurrency.symbol;
+
+            arbRate1 = Math.Round(tao.arbitrageTransactionChain[0].takerIndicatorRate,4).ToString();
+            arbRate2 = Math.Round(tao.arbitrageTransactionChain[1].takerIndicatorRate, 4).ToString();
+            arbRate3 = Math.Round(tao.arbitrageTransactionChain[2].takerIndicatorRate, 4).ToString();
+
+            maxVolume1 = "TODO";
+            maxVolume2 = "TODO";
+            maxVolume3 = "TODO";
+
+            tradeInstruction1 = "TODO";
+            tradeInstruction2 = "TODO";
+            tradeInstruction3 = "TODO";
+
+            fee1 = "TODO";
+            fee2 = "TODO";
+            fee3 = "TODO";
+
+            maxInitialVolume = Math.Round(tao.maxInitialVolume,4).ToString(); //TODO: get exchange granularity
+            percentageGain = Math.Round((tao.arbitrageRate - 1)*100,4) + "%";
+            volumeGain = "TODO";
+        }
         //Transaction 1
         public string exchange1 { get; set; }
         public string currency1 { get; set; }
@@ -44,5 +77,20 @@ namespace ArbitrageOpportunityFinder
         public string percentageGain { get; set; }
         public string volumeGain { get; set; }
 
+        private string RoundToSigFigsOrDecimalPlaces(decimal number, int sigFigs)
+        {
+            int decimalPlaces = 0;
+            bool decimalFlag = false;
+            foreach (char c in number.ToString())
+            {
+                if (c == '.')
+                    decimalFlag = true;
+
+                if (decimalFlag & c == '0')
+                    decimalPlaces++;
+            }
+
+            return number.ToString();
+        }
     }
 }
