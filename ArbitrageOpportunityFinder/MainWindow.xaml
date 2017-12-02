@@ -42,7 +42,7 @@
         <Label x:Name="label3" Content="Number of opportunities found: " HorizontalAlignment="Left" Margin="10,138,0,0" VerticalAlignment="Top"/>
         <Label x:Name="countTriArbOpportunities" Content="" HorizontalAlignment="Left" Margin="197,138,0,0" VerticalAlignment="Top"/>
         <ListBox x:Name="triArbDisplayBox" HorizontalAlignment="Left" Height="418" Margin="10,168,0,0" VerticalAlignment="Top" Width="853"
-                  SelectionChanged="listBox_SelectionChanged" IsEnabled="True" Grid.ColumnSpan="3">
+                  IsEnabled="True" Grid.ColumnSpan="3">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="Black" BorderThickness="2" Margin="1">
