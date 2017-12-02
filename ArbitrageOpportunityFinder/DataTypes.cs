@@ -8,11 +8,6 @@ namespace ArbitrageOpportunityFinder
     {
     }
 
-    public class Exchange
-    {
-        public string name { get; set; }
-    }
-
     public class TriArbOpportunity //triangular arbitrage opportunity
     {
         public int depth { get { return arbitrageTransactionChain.Count(); } }
@@ -54,7 +49,7 @@ namespace ArbitrageOpportunityFinder
                         {
                             if (arbitrageTransactionChain[j].takerIndicatorRate != 0)
                             {
-                                x[i] /= arbitrageTransactionChain[j].takerIndicatorRate;
+                                x[i] = (decimal)((double)x[i] / (double)arbitrageTransactionChain[j].takerIndicatorRate);
                             }
                             else
                             {
@@ -165,8 +160,8 @@ namespace ArbitrageOpportunityFinder
         {
             bidOrderbook = new List<decimal[]>();
             askOrderbook = new List<decimal[]>();
-            bidOrderbook.Add(new decimal[] { 1, decimal.MaxValue }); //TODO: get the actual numbers from either side's orderbook
-            askOrderbook.Add(new decimal[] { 1, decimal.MaxValue }); //TODO: get the actual numbers from either side's orderbook
+            bidOrderbook.Add(new decimal[] { 1, 1000000000 }); //TODO: get the actual numbers from either side's orderbook
+            askOrderbook.Add(new decimal[] { 1, 1000000000 }); //TODO: get the actual numbers from either side's orderbook
             baseCurrency = b;
             quoteCurrency = q;
             transactionType = t;
