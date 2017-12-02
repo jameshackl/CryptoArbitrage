@@ -4,47 +4,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         
-        d:DataContext="{StaticResource ResourceKey=MockMasterViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="850.4">
+        Title="MainWindow" Height="653.2" Width="898.4">
     <Grid Margin="0,0,-6,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="571*"/>
+            <ColumnDefinition Width="125*"/>
+            <ColumnDefinition Width="154*"/>
+        </Grid.ColumnDefinitions>
         <Button x:Name="button_SaveDatabase" Content="Save State" HorizontalAlignment="Left" Margin="320,591,0,0" VerticalAlignment="Top" Width="150"/>
         <Button x:Name="button_LoadDatabase" Content="Load Last Saved State" HorizontalAlignment="Left" Margin="10,591,0,0" VerticalAlignment="Top" Width="150"/>
         <Button x:Name="button_GetInitData" Content="Get Background Data" HorizontalAlignment="Left" Margin="165,591,0,0" VerticalAlignment="Top" Width="150"/>
         <ComboBox x:Name="comboBox_StartingExchange" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="120">
-            <ComboBoxItem IsSelected="True">Poloniex</ComboBoxItem>
+            <ComboBoxItem IsSelected="True" >Poloniex</ComboBoxItem>
             <ComboBoxItem >Cryptopia</ComboBoxItem>
-            <ComboBoxItem>Bittrex</ComboBoxItem>
-            <ComboBoxItem Content="ComboBoxItem" HorizontalAlignment="Left" Width="494.4"/>
             TODO: hardcoding. these need to be brough in dynamically for all of the available holdings
         </ComboBox>
         <!--http://www.wpf-tutorial.com/list-controls/combobox-control/-->
         <ComboBox x:Name="comboBox_StartingCurrency" HorizontalAlignment="Left" Margin="10,97,0,0" VerticalAlignment="Top" Width="120">
-            <ComboBoxItem IsSelected="True">BTC</ComboBoxItem>
+            <ComboBoxItem IsSelected="True" >BTC</ComboBoxItem>
             <ComboBoxItem >LTC</ComboBoxItem>
-            <ComboBoxItem>ETH</ComboBoxItem>
+            <ComboBoxItem >ETH</ComboBoxItem>
             TODO: hardcoding. these need to be brough in dynamically for all of the available holdings
         </ComboBox>
 
         <Label x:Name="label" Content="Starting Exchange" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label1" Content="Currency" HorizontalAlignment="Left" Margin="10,71,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="Ending Exchange" HorizontalAlignment="Left" Margin="193,10,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="comboBox2" HorizontalAlignment="Left" Margin="193,36,0,0" VerticalAlignment="Top" Width="120">
-            <ComboBoxItem IsSelected="True">Same as starting</ComboBoxItem>
-            <ComboBoxItem >ALL</ComboBoxItem>
-            <ComboBoxItem>Poloniex</ComboBoxItem>
-            <ComboBoxItem >Cryptopia</ComboBoxItem>
-            <ComboBoxItem>Bittrex</ComboBoxItem>
+        <ComboBox x:Name="comboBox_EndingExchange" HorizontalAlignment="Left" Margin="193,36,0,0" VerticalAlignment="Top" Width="120">
+            <ComboBoxItem IsSelected="True" Name="Poloniex">Poloniex</ComboBoxItem>
+            <ComboBoxItem Name="Cryptopia">Cryptopia</ComboBoxItem>
             TODO: hardcoding. these need to be brough in dynamically for all of the available holdings
         </ComboBox>
         <Button x:Name="button_GetTriArbOpportunities" Content="Find Triangular Arbitrage Opportunities" HorizontalAlignment="Left" Margin="193,97,0,0" VerticalAlignment="Top" Width="225" Height="22" Click="button_GetTriArbOpportunities_Click"/>
-        <Button x:Name="button_UpdatePricesAndVolumes" Content="Update Prices and Volumes" HorizontalAlignment="Left" Margin="456,16,0,0" VerticalAlignment="Top" Width="260" Click="button_UpdatePricesAndVolumes_Click"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="118" Margin="456,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="260"/>
+        <Button x:Name="button_UpdatePricesAndVolumes" Content="Update Prices and Volumes" HorizontalAlignment="Left" Margin="456,16,0,0" VerticalAlignment="Top" Width="260" Click="button_UpdatePricesAndVolumes_Click" Grid.ColumnSpan="3"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="118" Margin="456,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="260" Grid.ColumnSpan="3"/>
         <Label x:Name="label3" Content="Number of opportunities found: " HorizontalAlignment="Left" Margin="10,138,0,0" VerticalAlignment="Top"/>
         <Label x:Name="countTriArbOpportunities" Content="" HorizontalAlignment="Left" Margin="197,138,0,0" VerticalAlignment="Top"/>
-        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="418" Margin="10,168,0,0" VerticalAlignment="Top" Width="820"
-                 d:DataContext="{Binding Source={StaticResource MockMasterViewModel}}"
-                 ItemsSource="{Binding Items}" SelectionChanged="listBox_SelectionChanged">
+        <ListBox x:Name="triArbDisplayBox" HorizontalAlignment="Left" Height="418" Margin="10,168,0,0" VerticalAlignment="Top" Width="853"
+                  SelectionChanged="listBox_SelectionChanged" IsEnabled="True" Grid.ColumnSpan="3">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="Black" BorderThickness="2" Margin="1">
@@ -61,7 +59,7 @@
                                     <RowDefinition/>
 
                                 </Grid.RowDefinitions>
-                            
+
                                 <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding exchange1}" HorizontalAlignment="Center" />
                                 <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding currency1}" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14"/>
 
@@ -73,7 +71,7 @@
 
                                 <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding exchange4}" HorizontalAlignment="Center" />
                                 <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding currency4}" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14"/>
-                            
+
                                 <Border BorderBrush="Black" BorderThickness="1" Margin="1" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"/>
                                 <Border BorderBrush="Black" BorderThickness="1" Margin="1" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"/>
                                 <Border BorderBrush="Black" BorderThickness="1" Margin="1" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"/>
@@ -162,7 +160,7 @@
                                 <TextBlock Grid.Column="5" Grid.Row="0" Text="Return: " HorizontalAlignment="Right" FontWeight="Normal"/>
                                 <TextBlock Grid.Column="6" Grid.Row="2" Text="{Binding volumeGain}" HorizontalAlignment="Left" FontWeight="Bold"/>
                             </Grid>
-                        
+
 
                         </StackPanel>
                     </Border>
